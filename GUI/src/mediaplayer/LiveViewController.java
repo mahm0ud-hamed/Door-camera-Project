@@ -1,21 +1,32 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package mediaplayer;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.embed.swing.SwingNode;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
-import java.util.logging.Logger;
+import javafx.scene.Node;
+import javafx.scene.image.ImageView;
+import javafx.stage.Stage;
+import javax.swing.SwingUtilities;
+import org.freedesktop.gstreamer.Gst;
+import org.freedesktop.gstreamer.Pipeline;
+import org.freedesktop.gstreamer.Version;
+import org.freedesktop.gstreamer.elements.AppSink;
+import org.freedesktop.gstreamer.swing.GstVideoComponent;
+
+
+// 
+import javafx.embed.swing.SwingNode;
+
 
 /**
  * FXML Controller class
@@ -25,68 +36,87 @@ import java.util.logging.Logger;
 public class LiveViewController implements Initializable {
 
     @FXML
-    private Button showReplay;
+    private BorderPane borderPane;  // The BorderPane from FXML where video will be shown
     @FXML
-    private BorderPane borderPane;
+    private Button returnMain;
 
-    /**
-     * Initializes the controller class.
-     */
+    private Pipeline pipeline;
+    @FXML
+    private ImageView recordLable;
+    @FXML
+    private Button btnStartRec;
+    @FXML
+    private ImageView startRecImg;
+    @FXML
+    private Button btnStopRec;
+    @FXML
+    private ImageView StopRecImg;
+    
+    private boolean  isRecord = false ; 
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
-    }    
+      /*   recordLable.setVisible(false );
+        // Initialize GStreamer
+        Gst.init(Version.BASELINE, "BasicPipeline");
+
+        // Create GStreamer pipeline
+        pipeline = (Pipeline) Gst.parseLaunch("libcamerasrc ! videoconvert ! appsink name=sink");
+
+        AppSink sink = (AppSink) pipeline.getElementByName("sink");
+
+        // Create the GStreamer video component
+        GstVideoComponent gstVideoComponent = new GstVideoComponent(sink);
+        gstVideoComponent.setSize(600, 560);
+        gstVideoComponent.setVisible(true);
+
+        // Create a SwingNode to display the GStreamer video component in JavaFX
+        SwingNode swingNode = new SwingNode();
+        SwingUtilities.invokeLater(() -> {
+            swingNode.setContent(gstVideoComponent);
+        });
+
+        // Add the SwingNode (which contains the GstVideoComponent) to the BorderPane
+        borderPane.setCenter(swingNode);
+
+        // Play the pipeline
+        pipeline.play();*/
+    }
 
     @FXML
-    private void ShowRepl/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package mediaplayer;
+    private void returnMainAction(ActionEvent event) {
+        try {
+            BorderPane liveView = FXMLLoader.load(getClass().getResource("mainMenu.fxml"));
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.ResourceBundle;
-import java.util.logging.Level;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.layout.BorderPane;
-import java.util.logging.Logger;
+            // Get the stage from the event source
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 
-/**
- * FXML Controller class
- *
- * @author asem
- */
-public class LiveViewController implements Initializable {
+            // Create a new scene with the liveView BorderPane
+            Scene scene = new Scene(liveView);
 
-    @FXML
-    private Button showReplay;
-    @FXML
-    private BorderPane borderPane;
+            // Set the scene to the stage
+            stage.setScene(scene);
 
-    /**
-     * Initializes the controller class.
-     */
-    @Override
-    public void initialize(URL url, ResourceBundle rb) {
-        // TODO
-    }    
-
-    @FXML
-    private void ShowReplayAction(ActionEvent event) {
-            try { 
-            showReplay.setVisible(false);
-            BorderPane Live = FXMLLoader.load(getClass().getResource("FXMLDocument.fxml"));
-            borderPane.setCenter(Live);
+            // Set the stage to full screen
+            stage.setFullScreen(true);
         } catch (IOException ex) {
-            Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(LiveViewController.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    @FXML
+    private void startRecordAction(ActionEvent event) {
+        
+        recordLable.setVisible(true);
+       
         
     }
-    
+
+    @FXML
+    private void stopRecordAction(ActionEvent event) {
+        
+        recordLable.setVisible(false);
+
+        
+    }
 }
